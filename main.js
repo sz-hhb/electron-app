@@ -2,7 +2,14 @@
  * app 模块，它控制应用程序的事件生命周期
  * BrowserWindow 模块，它创建和管理应用程序 窗口
  */
-const { app, BrowserWindow, ipcMain, dialog, Menu } = require("electron")
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  dialog,
+  Menu,
+  nativeTheme
+} = require("electron")
 // 在你文件顶部导入 Node.js 的 path 模块
 const path = require("node:path")
 
@@ -36,6 +43,19 @@ const createWindow = () => {
 
   win.webContents.openDevTools()
 }
+
+ipcMain.handle("dark-mode:toggle", () => {
+  if (nativeTheme.shouldUseDarkColors) {
+    nativeTheme.themeSource = "light"
+  } else {
+    nativeTheme.themeSource = "dark"
+  }
+  return nativeTheme.shouldUseDarkColors
+})
+
+ipcMain.handle("dark-mode:system", () => {
+  nativeTheme.themeSource = "system"
+})
 
 // 只有在 app 模块的 ready 事件被激发后才能创建浏览器窗口
 app.whenReady().then(() => {
