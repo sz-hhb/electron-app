@@ -1,3 +1,16 @@
+const { contextBridge, ipcRenderer } = require("electron")
+
+contextBridge.exposeInMainWorld("versions", {
+  node: () => process.versions.node,
+  chrome: () => process.versions.chrome,
+  electron: () => process.versions.electron,
+  ping: () => ipcRenderer.invoke("ping"),
+  openFile: () => ipcRenderer.invoke("dialog:openFile"),
+  onUpdateCounter: (callback) =>
+    ipcRenderer.on("update-counter", (_event, value) => callback(value)),
+  countValue: (value) => ipcRenderer.invoke("count-value", value)
+})
+
 window.addEventListener("DOMContentLoaded", () => {
   const replaceText = (selector, text) => {
     const element = document.getElementById(selector)
